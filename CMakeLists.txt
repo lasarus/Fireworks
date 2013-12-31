@@ -12,6 +12,9 @@ include_directories(${SDL2IMAGE_INCLUDE_DIR})
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIR})
 
+find_package(OpenAL REQUIRED)
+include_directories(${OpenAL_INCLUDE_DIR})
+
 find_package(GLEW REQUIRED)
 include_directories(${GLEW_INCLUDE_PATH})
 
@@ -32,6 +35,7 @@ add_executable(fireworks ${src1} ${src2} ${src3})
 target_link_libraries(fireworks ${SDL2_LIBRARY})
 target_link_libraries(fireworks ${SDL2IMAGE_LIBRARY})
 target_link_libraries(fireworks ${OPENGL_LIBRARY})
+target_link_libraries(fireworks ${OPENAL_LIBRARY})
 target_link_libraries(fireworks ${GLEW_LIBRARY})
 target_link_libraries(fireworks ${FREETYPE_LIBRARIES})
 target_link_libraries(fireworks ${PNG_LIBRARY})

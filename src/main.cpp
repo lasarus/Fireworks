@@ -13,6 +13,7 @@
 #include <map>
 
 #include "image.h"
+#include "sound.h"
 
 #ifdef BIG_SCREEN
 int screen_width = 1280, screen_height = 720;
@@ -376,7 +377,9 @@ int main(int argc, char ** argv)
   scene.addPreset();
   scene.addPresetFromImage("image2.png", 0x0);
   scene.addPresetFromImage("image3.png", 0x0);
-  
+
+  init_sound();
+
   while(!quit)
     {
       const Uint8 * keystate;
@@ -440,6 +443,7 @@ int main(int argc, char ** argv)
       /* SDL_Delay(50); */
     }
 
+  clean_sound();
   SDL_DestroyWindow(window);
   SDL_Quit();
   return 0;
