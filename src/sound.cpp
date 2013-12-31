@@ -1,12 +1,13 @@
 #include <SDL.h>
 #include <AL/al.h>
 #include <AL/alc.h>
+#include <limits.h>
 
 ALCdevice * device;
 ALCcontext * context;
-ALuint buffer;
+ALuint buffers[2];
 
-const int source_count = 1;
+const int source_count = 16;
 ALuint sources[source_count];
 
 /* Load WAVE file via SDL functions*/
@@ -41,11 +42,10 @@ int init_sound()
 
   alGenSources(source_count, sources);
 
-  if(load_wav("sound1.wav", &buffer))
-    {
-      printf("error2!\n");
-      return 1;
-    }
+  if(load_wav("sound1.wav", &buffers[0]))
+    return 1;
+  if(load_wav("sound2.wav", &buffers[1]))
+    return 1;
 
   for(i = 0; i < source_count; i++)
     {
@@ -54,7 +54,7 @@ int init_sound()
       alSource3f(sources[i], AL_POSITION, 0, 0, 0);
       alSource3f(sources[i], AL_VELOCITY, 0, 0, 0);
       alSourcei(sources[i], AL_LOOPING, AL_FALSE);
-      alSourcei(sources[i], AL_BUFFER, buffer);  
+      alSourcei(sources[i], AL_BUFFER, buffers[0]);
     }
   return 0;
 }
@@ -62,7 +62,7 @@ int init_sound()
 int clean_sound()
 {
   alDeleteSources(source_count, sources);
-  alDeleteBuffers(1, &buffer);
+  alDeleteBuffers(2, buffers);
   device = alcGetContextsDevice(context);
   alcMakeContextCurrent(NULL);
   alcDestroyContext(context);
@@ -73,8 +73,34 @@ int clean_sound()
 
 int rotation = 0;
 
-void play_sound()
+void play_sound(int type)
 {
+  alSourcef(sources[rotation], AL_PITCH, 2 + (rand() / (double)RAND_MAX - .5));
+  alSource3f(sources[rotation], AL_POSITION, 0, 0, 0);
+  alSource3f(sources[rotation], AL_VELOCITY, 0, 0, 0);
+  alSourcei(sources[rotation], AL_LOOPING, AL_FALSE);
+
+  switch(type)
+    {
+    case 1:
+      alSourcef(sources[rotation], AL_GAIN, .3);
+      alSourcei(sources[rotation], AL_BUFFER, buffers[0]);
+      break;
+
+    case 2:
+      alSourcef(sources[rotation], AL_GAIN, .3);
+      alSourcei(sources[rotation], AL_BUFFER, buffers[1]);
+      break;
+
+    case 3:
+      alSourcef(sources[rotation], AL_GAIN, 1);
+      alSourcei(sources[rotation], AL_BUFFER, buffers[0]);
+      break;
+
+    default:
+      return;
+    }
+
   alSourcePlay(sources[rotation]);
   rotation++;
   rotation = rotation % source_count;

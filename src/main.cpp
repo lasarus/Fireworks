@@ -116,7 +116,9 @@ public:
   bool dead;
   int preset;
 
-  Firework(double x, double y, double xv, double yv, float r, float g, float b, int type, double size, int preset, int time)
+  int sound;
+
+  Firework(double x, double y, double xv, double yv, float r, float g, float b, int type, double size, int preset, int time, int sound)
   {
     this->x = x;
     this->y = y;
@@ -133,15 +135,16 @@ public:
     this->dead = false;
     this->preset = preset;
     this->time = time;
+    this->sound = sound;
   }
 
   Firework(double x, double y, double xv, double yv, float r, float g, float b, int type, double size, int preset) :
-    Firework(x, y, xv, yv, r, g, b, type, size, preset, 100)
+    Firework(x, y, xv, yv, r, g, b, type, size, preset, 100, 0)
   {
   };
 
   Firework(double x, double y, double xv, double yv, float r, float g, float b, int type, double size = 3) :
-    Firework(x, y, xv, yv, r, g, b, type, 3, 0, 100)
+    Firework(x, y, xv, yv, r, g, b, type, 3, 0, 100, 0)
   {
   };
 
@@ -171,6 +174,9 @@ public:
 
   void onDeath(std::vector<Firework> &addlist)
   {
+    if(sound)
+      play_sound(sound);
+
     switch(type)
       {
       case TYPE_NORMAL:
@@ -183,7 +189,7 @@ public:
 	    {
 	      double pxv = cos((i / (double)max) * PI2),
 		pyv = sin((i / (double)max) * PI2);
-	      addlist.push_back(Firework(x, y, pxv, pyv - 3, 1, 1, 1, TYPE_NORMAL, 2, 0, 75));
+	      addlist.push_back(Firework(x, y, pxv, pyv - 3, 1, 1, 1, TYPE_NORMAL, 2, 0, 75, 0));
 	    }
 	}
 	return;
@@ -252,7 +258,7 @@ public:
       {
 	double pxv = cos((i / (double)max) * PI2),
 	  pyv = sin((i / (double)max) * PI2);
-	list.push_back(Firework(0, 0, pxv, pyv - 5, 1, .2, .2, TYPE_CIRCLE, 2, 0, 125));
+	list.push_back(Firework(0, 0, pxv, pyv - 5, 1, .2, .2, TYPE_CIRCLE, 2, 0, 125, 0));
       }
 
     presets.push_back(list);
@@ -283,7 +289,7 @@ public:
 	  xv = (i - (image->w / 2)) / 10.;
 	  yv = (j - (image->h / 2)) / 10. - 2;
 
-	  list.push_back(Firework(0, 0, xv, yv, r / 255., g / 255., b / 255., TYPE_NORMAL, 1, 0, 75));
+	  list.push_back(Firework(0, 0, xv, yv, r / 255., g / 255., b / 255., TYPE_NORMAL, 1, 0, 75, 0));
 	}
 
     SDL_FreeSurface(image);
@@ -310,19 +316,19 @@ void scene_program(int time, Scene &scene)
 	  xv = sin(sin(time / 100.)) * 6;
 	  yv = -cos(sin(time / 100.)) * 16;
 	  scene.addFirework(Firework(screen_width / 2, screen_height, xv, yv,
-				     1, 0, 0, TYPE_CIRCLE, 3, 0, 125));
+				     1, 0, 0, TYPE_CIRCLE, 3, 0, 125, 2));
 	}
     }
   if(time == 1000)
     {
       scene.addFirework(Firework(screen_width / 2, screen_height, 0, -17,
-				 1, 0, 0, TYPE_NORMAL, 3, 1, 125));
+				 1, 0, 0, TYPE_NORMAL, 3, 1, 125, 3));
 
       scene.addFirework(Firework(screen_width / 10, screen_height, 0, -15,
-				 .1, 1, .1, TYPE_CIRCLE, 3, 0, 100));
+				 .1, 1, .1, TYPE_CIRCLE, 3, 0, 100, 3));
 
       scene.addFirework(Firework(screen_width / 10 * 9, screen_height, 0, -15,
-				 .1, 1, .1, TYPE_CIRCLE, 3, 0, 100));
+				 .1, 1, .1, TYPE_CIRCLE, 3, 0, 100, 3));
     }
   int delay = 5, steps = 20;
   if(time > 1100 && time < 1100 + screen_width / (steps / delay))
@@ -330,7 +336,7 @@ void scene_program(int time, Scene &scene)
       if(time % delay == 0)
 	{
 	  scene.addFirework(Firework(fi * steps, screen_height, 0, -15,
-				     .1, 1, .1, TYPE_NORMAL, 3, 2, 100));
+				     .1, 1, .1, TYPE_NORMAL, 3, 2, 100, 2));
 	  fi++;
 	}
     }
@@ -344,18 +350,18 @@ void scene_program(int time, Scene &scene)
       for(i = 0; i < 20; i++)
 	{
 	  scene.addFirework(Firework(screen_width / 2, screen_height, cos(i / 20. * PI) * 10, -sin(i / 20. * PI) * 16,
-				     .1, 1, .1, TYPE_NORMAL, 3, 2, 100));
+				     .1, 1, .1, TYPE_NORMAL, 3, 2, 100, 1));
 	}
     }
   if(time == 1100 + screen_width / (steps / delay) + 50)
     {
       scene.addFirework(Firework(screen_width / 2, screen_height, 0, -16,
-				 .1, 1, .1, TYPE_NORMAL, 3, 3, 100));
+				 .1, 1, .1, TYPE_NORMAL, 3, 3, 100, 1));
 
       scene.addFirework(Firework(screen_width / 2, screen_height, -3, -15,
-				 .1, 1, .1, TYPE_NORMAL, 3, 4, 100));
+				 .1, 1, .1, TYPE_NORMAL, 3, 4, 100, 1));
       scene.addFirework(Firework(screen_width / 2, screen_height, 3, -15,
-				 .1, 1, .1, TYPE_NORMAL, 3, 4, 100));
+				 .1, 1, .1, TYPE_NORMAL, 3, 4, 100, 1));
     }
 }
 
@@ -422,7 +428,7 @@ int main(int argc, char ** argv)
 	  xv += (rand() % 100) / 100. - 0.5;
 	  yv += (rand() % 100) / 100. - 0.5;
 	  scene.addFirework(Firework(screen_width / 2, screen_height, xv, yv,
-				     (rand() % 256) / 255., (rand() % 256) / 255., (rand() % 256) / 255., TYPE_NORMAL, 3, 2));
+				     (rand() % 256) / 255., (rand() % 256) / 255., (rand() % 256) / 255., TYPE_NORMAL, 3, 3));
 	  delay = 1;
 	}
       delay -= .05;

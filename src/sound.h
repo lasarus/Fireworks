@@ -3,6 +3,6 @@
 
 int init_sound();
 int clean_sound();
-void play_sound();
+void play_sound(int type);
 
 #endif
