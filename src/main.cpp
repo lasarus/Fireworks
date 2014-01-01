@@ -363,6 +363,11 @@ void scene_program(int time, Scene &scene)
       scene.addFirework(Firework(screen_width / 2, screen_height, 3, -15,
 				 .1, 1, .1, TYPE_NORMAL, 3, 4, 100, 1));
     }
+  if(time == 1150 + screen_width / (steps / delay) + 50)
+    {
+      scene.addFirework(Firework(screen_width / 2, screen_height, 0, -16,
+				 .1, 1, .1, TYPE_NORMAL, 6, 5, 100, 1));
+    }
 }
 
 int main(int argc, char ** argv)
@@ -383,6 +388,7 @@ int main(int argc, char ** argv)
   scene.addPreset();
   scene.addPresetFromImage("image2.png", 0x0);
   scene.addPresetFromImage("image3.png", 0x0);
+  scene.addPresetFromImage("image4.png", 0x0);
 
   init_sound();
 
